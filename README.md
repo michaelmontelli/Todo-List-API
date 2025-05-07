@@ -5,4 +5,10 @@ Simple REST API to help me learn the basics of Express and Typescript. Project r
 TODO
 
 To run:
-- ...
+- (Optional) Create a .env file in the format of the provided `.env.example`
+- Run `npm install` to install the needed dependencies
+- Run `npm run dev` to start the server
+- Sample CURL requests:
+```
+curl -X POST -H 'Content-Type: application/json' -d '{"email": "email", "password": "password"}' http://localhost:3000/register
+```
