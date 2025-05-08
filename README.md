@@ -8,5 +8,5 @@ To run:
 - Run `npm run dev` to start the server
 - Sample CURL requests:
 ```
-sh curl -X POST \ -H "Content-Type: application/json" \ -d '{"email": "email", "password": "password"}' \ http://localhost:3000/register
+curl -X POST -H 'Content-Type: application/json' -d '{"email": "email", "password": "password"}' http://localhost:3000/register
 ```
