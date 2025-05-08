@@ -17,10 +17,8 @@ userRouter.post("/register", (req: Request, res: Response) => {
     try {
         validateCreateAccountRequest(req);
     } catch (error) {
-        if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
-            return;
-        }
+        res.status(400).json({ message: getErrorMessage(error) });
+        return;
     }
 
     // hash the password
@@ -55,3 +53,43 @@ function validateCreateAccountRequest(req: Request) {
     }
 }
 
+userRouter.post("/login", (req: Request, res: Response) => {
+    try {
+        validateLoginRequest(req);
+    } catch (error) {
+        res.status(400).json({ message: getErrorMessage(error) });
+        return;
+    }
+
+    // respond with a token if the authentication is successful
+    const { email } = req.body;
+
+    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ token });
+});
+
+function validateLoginRequest(req: Request) {
+    const { email, password } = req.body;
+
+    // validate the given email and password
+    if (!email || !password) {
+        throw new Error("Email and password are required to login");
+    }
+
+    const user = users.find(user => user.email === email);
+
+    if (!user) {
+        throw new Error("No account exists for this email");
+    }
+
+    const { password: storedHashedPassword } = user
+
+    if (!bcrypt.compareSync(password, storedHashedPassword)) {
+        throw new Error("Password incorrect");
+    }
+}
+
+function getErrorMessage(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    return String(error); // fallback just in case
+}
