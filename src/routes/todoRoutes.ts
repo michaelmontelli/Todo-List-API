@@ -1,0 +1,1 @@
+// TODO: Follow https://www.npmjs.com/package/jsonwebtoken and use `jwt.verify(token, JWT_SECRET)`

@@ -34,7 +34,7 @@ userRouter.post("/register", (req: Request, res: Response) => {
     users.push(newUser);
 
     // Respond with a token that can be used for authentication if the registration is successful
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ email }, JWT_SECRET);
     res.status(201).json({ token });
 });
 
@@ -64,7 +64,7 @@ userRouter.post("/login", (req: Request, res: Response) => {
     // respond with a token if the authentication is successful
     const { email } = req.body;
 
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ email }, JWT_SECRET);
     res.status(200).json({ token });
 });
 
