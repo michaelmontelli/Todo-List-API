@@ -1,1 +1,2 @@
-export * from "./userRoutes";
+export * from "./usersRoutes";
+export * from "./todosRoutes";

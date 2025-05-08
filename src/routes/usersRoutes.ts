@@ -11,9 +11,9 @@ interface User {
 
 const users: User[] = [];
 
-export const userRouter = Router();
+export const usersRouter = Router();
 
-userRouter.post("/register", (req: Request, res: Response) => {
+usersRouter.post("/register", (req: Request, res: Response) => {
     try {
         validateCreateAccountRequest(req);
     } catch (error) {
@@ -53,7 +53,7 @@ function validateCreateAccountRequest(req: Request) {
     }
 }
 
-userRouter.post("/login", (req: Request, res: Response) => {
+usersRouter.post("/login", (req: Request, res: Response) => {
     try {
         validateLoginRequest(req);
     } catch (error) {
@@ -91,5 +91,5 @@ function validateLoginRequest(req: Request) {
 
 function getErrorMessage(error: unknown): string {
     if (error instanceof Error) return error.message;
-    return String(error); // fallback just in case
+    return String(error);
 }
