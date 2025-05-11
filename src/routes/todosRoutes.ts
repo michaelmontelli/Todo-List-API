@@ -3,6 +3,9 @@ import { getErrorMessage } from "../utils";
 import { authenticateRequest } from "../middleware";
 import { AuthenticatedRequest } from "../types";
 
+const DEFAULT_PAGE = 1;
+const DEFAULT_ITEM_LIMIT = 10;
+
 interface TodoItem {
     id: number;
     email: string;
@@ -130,3 +133,50 @@ todosRouter.delete("/todos/:id", (req: Request, res: Response) => {
     }
     res.status(204).send("Todo item deleted successfully" );
 });
+
+interface GetTodoItemsRequestQueryParams {
+    page: number;
+    limit: number;
+}
+
+todosRouter.get("/todos", (req: Request, res: Response) => {
+    let queryParams: GetTodoItemsRequestQueryParams;
+    try {
+        queryParams = validateGetTodoItemsRequest(req);
+    } catch (error) {
+        const message = getErrorMessage(error);
+        res.status(400).json({ message });
+        return;
+    }
+
+    const { page, limit } = queryParams;
+    const userTodosWithoutEmail = todos.filter(todo => todo.email === (req as AuthenticatedRequest).email)
+                                        .map(todo => extractTodoItemWithoutEmail(todo));
+
+    const startIndex = (page - 1) * limit;
+    const paginatedTodos = userTodosWithoutEmail.slice(startIndex, startIndex + limit);
+
+    res.status(200).json({
+        data: paginatedTodos,
+        page,
+        limit,
+        total: userTodosWithoutEmail.length,
+    });
+});
+
+function validateGetTodoItemsRequest(req: Request): GetTodoItemsRequestQueryParams {
+    const { page, limit } = req.query;
+
+    const parsedPage = page ? parseInt(String(page)) : DEFAULT_PAGE;
+    const parsedLimit = limit ? parseInt(String(limit)) : DEFAULT_ITEM_LIMIT;
+
+    if (isNaN(parsedPage) || parsedPage <= 0) {
+        throw new Error("Invalid 'page' parameter");
+    }
+
+    if (isNaN(parsedLimit) || parsedLimit <= 0) {
+        throw new Error("Invalid 'limit' parameter");
+    }
+
+    return { page: parsedPage, limit: parsedLimit };
+}
