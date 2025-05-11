@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { getErrorMessage } from "../utils";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
 
@@ -87,9 +88,4 @@ function validateLoginRequest(req: Request) {
     if (!bcrypt.compareSync(password, storedHashedPassword)) {
         throw new Error("Password incorrect");
     }
-}
-
-function getErrorMessage(error: unknown): string {
-    if (error instanceof Error) return error.message;
-    return String(error);
 }
