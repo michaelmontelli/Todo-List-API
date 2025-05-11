@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import express, { Request, Response } from "express";
 import { usersRouter, todosRouter } from "./routes";
+import { logRequest } from "./middleware";
 
 dotenv.config();
 
@@ -8,6 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(logRequest);
+
 app.use("/", usersRouter);
 app.use("/", todosRouter)
 
