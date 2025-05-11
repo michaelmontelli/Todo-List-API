@@ -71,6 +71,17 @@ todosRouter.put("/todos/:id", (req: Request, res: Response) => {
 });
 
 function validateUpdateTodoItemRequest(req: Request): TodoItem {
+    const todoItem = validateTodoIdInRequest(req);
+
+    const { title, description } = req.body;
+    if (!title || !description) {
+        throw new Error("Title and description are required to update a todo item");
+    }
+
+    return todoItem;
+}
+
+function validateTodoIdInRequest(req: Request): TodoItem {
     const idAsString = req.params.id;
     if (!idAsString) {
         throw new Error("Todo item id required");
@@ -90,11 +101,6 @@ function validateUpdateTodoItemRequest(req: Request): TodoItem {
         throw new Error("Forbidden");
     }
 
-    const { title, description } = req.body;
-    if (!title || !description) {
-        throw new Error("Title and description are required to update a todo item");
-    }
-
     return todoItem;
 }
 
@@ -102,3 +108,25 @@ function extractTodoItemWithoutEmail(todoItem: TodoItem) {
     const { email, ...todoItemWithoutEmail } = todoItem;
     return todoItemWithoutEmail;
 }
+
+todosRouter.delete("/todos/:id", (req: Request, res: Response) => {
+    let todoItem: TodoItem;
+    try {
+        todoItem = validateTodoIdInRequest(req);
+    } catch (error) {
+        const message = getErrorMessage(error);
+
+        if (message === "Forbidden") {
+            res.status(403).json({ message });
+        } else {
+            res.status(400).json({ message });
+        }
+        return;
+    }
+
+    const index = todos.findIndex(todo => todo.id === todoItem.id);
+    if (index !== -1) {
+        todos.splice(index, 1);
+    }
+    res.status(204).send("Todo item deleted successfully" );
+});
