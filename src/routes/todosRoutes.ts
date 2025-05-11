@@ -34,8 +34,9 @@ todosRouter.post("/todos", (req: Request, res: Response) => {
     };
     todos.push(newTodoItem);
 
-    const { email, ...newTodoItemWithoutEmail } = newTodoItem;
-    res.status(200).send(newTodoItemWithoutEmail);
+    res.status(200).send(
+        extractTodoItemWithoutEmail(newTodoItem)
+    );
 });
 
 function validateCreateTodoItemRequest(req: Request) {
@@ -43,4 +44,61 @@ function validateCreateTodoItemRequest(req: Request) {
     if (!title || !description) {
         throw new Error("Title and description are required to create a todo item");
     }
+}
+
+todosRouter.put("/todos/:id", (req: Request, res: Response) => {
+    let todoItem: TodoItem;
+    try {
+        todoItem = validateUpdateTodoItemRequest(req);
+    } catch (error) {
+        const message = getErrorMessage(error);
+
+        if (message === "Forbidden") {
+            res.status(403).json({ message });
+        } else {
+            res.status(400).json({ message });
+        }
+        return;
+    }
+
+    const { title, description } = req.body;
+    todoItem.title = title;
+    todoItem.description = description;
+
+    res.status(200).json(
+        extractTodoItemWithoutEmail(todoItem)
+    );
+});
+
+function validateUpdateTodoItemRequest(req: Request): TodoItem {
+    const idAsString = req.params.id;
+    if (!idAsString) {
+        throw new Error("Todo item id required");
+    }
+
+    const todoId = parseInt(idAsString);
+    if (isNaN(todoId)) {
+        throw new Error("Invalid todo item id provided");
+    }
+
+    const todoItem = todos.find(todo => todo.id === todoId);
+    if (!todoItem) {
+        throw new Error("Invalid todo item id provided");
+    }
+
+    if (todoItem.email !== (req as AuthenticatedRequest).email) {
+        throw new Error("Forbidden");
+    }
+
+    const { title, description } = req.body;
+    if (!title || !description) {
+        throw new Error("Title and description are required to update a todo item");
+    }
+
+    return todoItem;
+}
+
+function extractTodoItemWithoutEmail(todoItem: TodoItem) {
+    const { email, ...todoItemWithoutEmail } = todoItem;
+    return todoItemWithoutEmail;
 }
