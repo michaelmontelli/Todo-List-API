@@ -30,7 +30,7 @@ A simple RESTful API built with **TypeScript** and **Express** for todo-list man
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/yourusername/todo-list-api.git
+   git clone https://github.com/michaelmontelli/Todo-List-API.git
    cd todo-list-api
    ```
 
