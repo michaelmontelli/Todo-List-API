@@ -1,29 +1,101 @@
-# Todo-List-API
-Simple REST API to help me learn the basics of Express and Typescript. Project requirements can be found at [https://roadmap.sh/projects/todo-list-api](https://roadmap.sh/projects/todo-list-api).
+# 📝 Todo List API
 
-## Instructions
-To run:
-- (Optional) Create a .env file in the format of the provided `.env.example`
-- Run `npm install` to install the needed dependencies
-- Run `npm run dev` to start the server
-- Sample CURL requests:
-    - Register email
+A simple RESTful API built with **TypeScript** and **Express** for todo-list management.
+
+📌 [Project Requirements](https://roadmap.sh/projects/todo-list-api)
+
+---
+
+## 🚀 Features
+
+- User registration and login with JWT
+- Secure password storage using bcrypt
+- Full CRUD for to-do items
+- Auth-middleware for token-based route protection
+- Pagination for retrieving todos
+- Input validation and error handling
+
+---
+
+## 🛠 Tech Stack
+
+- **Backend:** Node.js, Express.js, TypeScript
+- **Authentication:** JSON Web Tokens (JWT), bcrypt
+- **Database:** Good ole arrays
+- **Dev Tools:** Nodemon, dotenv
+
+---
+
+## ⚙️ Getting Started
+
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/yourusername/todo-list-api.git
+   cd todo-list-api
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file based on `.env.example` with your config (e.g. JWT secret, database URL).
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📬 API Usage
+
+All requests expect `Content-Type: application/json`. Most routes require an `Authorization: Bearer <token>` header.
+
+### 🔐 Register
+```bash
+curl -X POST http://localhost:3000/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@gmail.com", "password": "password"}'
 ```
-curl -X POST 'http://localhost:3000/register' -H 'Content-Type: application/json' -d '{"email": "test@gmail.com", "password": "password"}'
+
+### 🔐 Login
+```bash
+curl -X POST http://localhost:3000/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@gmail.com", "password": "password"}'
 ```
-    - Create todo item
+
+### ➕ Create a To-Do
+```bash
+curl -X POST http://localhost:3000/todos \
+  -H "Authorization: Bearer <your-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Clean cat litter", "description": "Take care of the pets!"}'
 ```
-curl -X POST 'http://localhost:3000/todos' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNzQ2OTMzOTE4fQ.hioPEHV_1Xxew-6l_T8afeqlM5L7RZ5mKvJf4tAAwek' -d '{"title": "Clean cat litters", "description": "The cats poop in the litter box and it needs cleaning"}'
+
+### ✏️ Update a To-Do
+```bash
+curl -X PUT http://localhost:3000/todos/1 \
+  -H "Authorization: Bearer <your-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Cut grass", "description": "The grass is long!"}'
 ```
-    - Update todo item
+
+### ❌ Delete a To-Do
+```bash
+curl -X DELETE http://localhost:3000/todos/1 \
+  -H "Authorization: Bearer <your-token>"
 ```
-curl -X PUT 'http://localhost:3000/todos/1' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNzQ2OTMzOTE4fQ.hioPEHV_1Xxew-6l_T8afeqlM5L7RZ5mKvJf4tAAwek' -d '{"title": "Cut grass", "description": "The grass is long!"}'
+
+### 📄 Get Paginated To-Dos
+```bash
+curl -X GET "http://localhost:3000/todos?page=1&limit=10" \
+  -H "Authorization: Bearer <your-token>"
 ```
-    - Delete todo item
-```
-curl -X DELETE 'http://localhost:3000/todos/1' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNzQ2OTMzOTE4fQ.hioPEHV_1Xxew-6l_T8afeqlM5L7RZ5mKvJf4tAAwek'
-```
-    - Get todo items with pagination
-```
-curl -X GET 'http://localhost:3000/todos?page=1&limit=1' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNzQ2OTMzOTE4fQ.hioPEHV_1Xxew-6l_T8afeqlM5L7RZ5mKvJf4tAAwek'
-```
+
+---
+
+## 📄 License
+
+MIT

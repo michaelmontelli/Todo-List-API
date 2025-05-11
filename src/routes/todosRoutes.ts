@@ -56,6 +56,8 @@ todosRouter.put("/todos/:id", (req: Request, res: Response) => {
     } catch (error) {
         const message = getErrorMessage(error);
 
+        // Respond with an error and status code 403
+        // if the user is not authorized to update the item.
         if (message === "Forbidden") {
             res.status(403).json({ message });
         } else {
@@ -100,6 +102,8 @@ function validateTodoIdInRequest(req: Request): TodoItem {
         throw new Error("Invalid todo item id provided");
     }
 
+    // Also make sure to validate the user has the permission to update the to-do item
+    // i.e. the user is the creator of todo item that they are updating
     if (todoItem.email !== (req as AuthenticatedRequest).email) {
         throw new Error("Forbidden");
     }
@@ -113,6 +117,7 @@ function extractTodoItemWithoutEmail(todoItem: TodoItem) {
 }
 
 todosRouter.delete("/todos/:id", (req: Request, res: Response) => {
+    // User must be authenticated and authorized to delete the to-do item.
     let todoItem: TodoItem;
     try {
         todoItem = validateTodoIdInRequest(req);
@@ -131,6 +136,8 @@ todosRouter.delete("/todos/:id", (req: Request, res: Response) => {
     if (index !== -1) {
         todos.splice(index, 1);
     }
+
+    // Upon successful deletion, respond with the status code 204.
     res.status(204).send("Todo item deleted successfully" );
 });
 
